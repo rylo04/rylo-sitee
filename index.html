@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Video schneiden lassen – 25€</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #ffffff;
+    margin: 0;
+}
+
+/* Discord Link */
+.discord {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    background: #5865F2;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.container {
+    max-width: 600px;
+    background: #f8f8f8;
+    margin: 80px auto;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+h1 {
+    text-align: center;
+}
+
+.price {
+    text-align: center;
+    font-size: 28px;
+    color: #2ecc71;
+    font-weight: bold;
+}
+
+label {
+    margin-top: 15px;
+    display: block;
+    font-weight: bold;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+/* Drag & Drop */
+.drop-zone {
+    margin-top: 15px;
+    padding: 30px;
+    border: 2px dashed #3498db;
+    border-radius: 10px;
+    text-align: center;
+    color: #3498db;
+    cursor: pointer;
+}
+
+.drop-zone.dragover {
+    background: #ecf5ff;
+}
+
+button {
+    margin-top: 25px;
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    background: #070731;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<a class="discord" href="https://discord.gg/SgCatpzK5R" target="_blank">💬 Discord</a>
+
+<div class="container">
+    <h1>🎬 Kurz-Video schneiden lassen</h1>
+    <div class="price">25 €</div>
+
+    <label>Name</label>
+    <input id="name" placeholder="Max Mustermann">
+
+    <label>E-Mail</label>
+    <input id="email" placeholder="email@example.de">
+
+    <label>Video hochladen</label>
+    <div class="drop-zone" id="dropZone">
+        Datei hier reinziehen oder klicken
+        <input type="file" id="fileInput" hidden>
+    </div>
+
+    <label>Wünsche</label>
+    <textarea id="notes" placeholder="Untertitel, Stil, Musik …"></textarea>
+
+    <button onclick="sendBooking()">Jetzt buchen</button>
+</div>
+
+<script>
+const dropZone = document.getElementById("dropZone");
+const fileInput = document.getElementById("fileInput");
+let fileName = "Keine Datei";
+
+dropZone.addEventListener("click", () => fileInput.click());
+
+fileInput.addEventListener("change", () => {
+    fileName = fileInput.files[0].name;
+    dropZone.innerText = "📁 " + fileName;
+});
+
+dropZone.addEventListener("dragover", e => {
+    e.preventDefault();
+    dropZone.classList.add("dragover");
+});
+
+dropZone.addEventListener("dragleave", () => {
+    dropZone.classList.remove("dragover");
+});
+
+dropZone.addEventListener("drop", e => {
+    e.preventDefault();
+    fileInput.files = e.dataTransfer.files;
+    fileName = fileInput.files[0].name;
+    dropZone.innerText = "📁 " + fileName;
+    dropZone.classList.remove("dragover");
+});
+
+    function sendBooking() {
+        const webhookURL = "https://discord.com/api/webhooks/1469338949439721718/lDjJaJJ9BjVceRh_mnwS_QlfGS5toT7I3ELgkSJWmSSQjUxtA3JiiXQxbTD_HQxmIBCS";
+
+        // Hier werden die Variablen definiert, die vorher gefehlt haben:
+        const nameVal = document.getElementById("name").value;
+        const emailVal = document.getElementById("email").value;
+        const notesVal = document.getElementById("notes").value;
+
+        const data = {
+            content: `📢 **Neue Buchung!**\n👤 **Name:** ${nameVal}\n📧 **Email:** ${emailVal}\n📁 **Datei:** ${fileName}\n📝 **Wünsche:** ${notesVal}`
+        };
+
+        fetch(webhookURL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+        .then(() => alert("✅ ✅ Booking sent! The editor will contact you."))
+        .catch(err => alert("❌ Fehler beim Senden."));
+    }
+</script>
+
+<div class="visitors">
+    👀 <span id="visitorCount">0</span> Besucher online
+</div>
+
+</body>
+</html>
